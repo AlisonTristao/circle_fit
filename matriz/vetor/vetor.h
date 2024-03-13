@@ -13,18 +13,6 @@ using namespace std;
 // *       Class of Vectors       *
 // ********************************
 
-/*
-    CUIDADO NA INTERAÇÂO DE VETORES DE TAMANHOS DIFERENTES
-    ao acessar itens fora do tamanho do vetor, as funções retornam zero
-
-    ex multiplicação linha x coluna:
-    (ele vai completar o dado que falta com zeros)
-
-    [1, 2, 4] * [1]
-                [2]
-                [0] <-
-*/
-
 template <class TYPE>
 class vetor {
     private:
@@ -35,6 +23,13 @@ class vetor {
         vetor(int size){
             set_size(size);
         };
+        virtual ~vetor(){
+            delete[] arr_data;
+        };
+        void set_null(){
+            arr_data = nullptr;
+            arr_size = 0;
+        };
         void set_size(int size){
             arr_size = size;
             arr_data = new TYPE[size];
@@ -42,11 +37,9 @@ class vetor {
             for(int i = 0; i < size; i++) // preenche com zeros
                 arr_data[i] = default_value;
         };
-        virtual ~vetor(){
-            delete[] arr_data;
-        };
 
         // manipulação dos dados
+        bool verify_dim(const vetor<TYPE>& v);
         void set_value(int index, TYPE value);
         const TYPE get_value(int index) const;
         vetor<double> get_unit_vector();
@@ -72,30 +65,44 @@ class vetor {
 };
 
 template <class TYPE>
-string vetor<TYPE>::text(){
-    // ex: [1, 2, 3]
-    string text = "[";
-    for(int i = 0; i < arr_size; i++){
-        text += to_string(arr_data[i]);
-        if(i < arr_size - 1) text += ", ";
+bool vetor<TYPE>::verify_dim(const vetor<TYPE>& v){
+    if(this->length() != v.length()){
+        cout << "Vetores com dimensoes diferentes" << endl;
+        return true;
     }
-    text += "]";
-    return text; 
+    return false;
 }
 
 template <class TYPE>
 void vetor<TYPE>::set_value(int index, TYPE value){
-    if(index < 0 || index >= arr_size) return;
+    if(index < 0 || index >= arr_size){
+        cout << "Erro no tamanho dos vetores (set_value)" << endl;
+        return;
+    }
     arr_data[index] = value;
 }
 
 template <class TYPE>
 const TYPE vetor<TYPE>::get_value(int index) const{
     if(index < 0 || index >= arr_size){
+        cout << "Erro no tamanho dos vetores (get_value)" << endl;
         static TYPE default_value;
         return default_value;
     }
     return arr_data[index]; 
+}
+
+template <class TYPE>
+string vetor<TYPE>::text(){
+    // ex: [1, 2, 3]
+    string text = "[";
+    for(int i = 0; i < arr_size; i++){
+        text += to_string(this->get_value(i));
+        if(i < arr_size - 1) text += ", ";
+    }
+    if(!arr_size) text += "NULL"; // obj null
+    text += "]";
+    return text; 
 }
 
 template <class TYPE>
@@ -105,11 +112,7 @@ const int vetor<TYPE>::length() const{
 
 template <class TYPE>
 const TYPE vetor<TYPE>::operator[](int index) const {
-    if(index < 0 || index >= arr_size){
-        static TYPE default_value;
-        return default_value;
-    }
-    return arr_data[index]; 
+    return this->get_value(index); 
 }
 
 template <class TYPE>
@@ -117,7 +120,7 @@ double vetor<TYPE>::get_module(){
     // soma os elemtnos ao quadrado
     TYPE sum_quadratic_elemts = 0;    
     for(int i = 0; i < arr_size; i++)
-        sum_quadratic_elemts += arr_data[i]*arr_data[i];
+        sum_quadratic_elemts += this->get_value(i)*this->get_value(i);
     // retorna a raiz da soma
     return sqrt(sum_quadratic_elemts);
 }
@@ -129,36 +132,31 @@ vetor<double> vetor<TYPE>::get_unit_vector(){
     double module = this->get_module();
     // define a dimensao de cada elemento
     for(int i = 0; i < arr_size; i++)
-        unit_vector.set_value(i, arr_data[i]/module);
+        unit_vector.set_value(i, this->get_value(i)/module);
     return unit_vector; 
 }
 
-// cuidado com arryas definidos com tamanho diferentes
 template <class TYPE>
 void vetor<TYPE>::operator=(const vetor<TYPE> v){
     for(int i = 0; i < arr_size; i++)
-        arr_data[i] = v[i];
+        this->get_value(i) = v[i];
 }
 
 template <class TYPE>
 vetor<TYPE> vetor<TYPE>::operator+(const vetor<TYPE>& v){
-    // maior comprimento de cada
-    int max_length = (v.length() > this->length()) ? v.length() : this->length();
-    // completa os numeros vazios com 0
-    vetor<TYPE> result(max_length);
-    for(int i = 0; i < max_length; i++)
-        result.set_value(i, v[i] + arr_data[i]);
+    vetor<TYPE> result(this->length());
+    if(this->verify_dim(v)) result.set_null(); // obj null
+    for(int i = 0; i < result.length(); i++)
+        result.set_value(i, v[i] + this->get_value(i));
     return result;
 }
 
 template <class TYPE>
 vetor<TYPE> vetor<TYPE>::operator-(const vetor<TYPE>& v){
-    // maior comprimento de cada
-    int max_length = (v.length() > this->length()) ? v.length() : this->length();
-    // completa os numeros vazios com 0
-    vetor<TYPE> result(max_length);
+    vetor<TYPE> result(this->length());
+    if(this->verify_dim(v)) result.set_null(); // obj null
     for(int i = 0; i < arr_size; i++)
-        result.set_value(i, arr_data[i] - v[i]);
+        result.set_value(i, this->get_value(i) - v[i]);
     return result;
 }
 
@@ -167,7 +165,7 @@ template <class TYPE>
 vetor<TYPE> vetor<TYPE>::operator/(const TYPE alfa) const{
     vetor<TYPE> result(arr_size); 
     for(int i = 0; i < arr_size; i++)
-        result.set_value(i, arr_data[i]/alfa);
+        result.set_value(i, this->get_value(i)/alfa);
     return result; 
 }
 
@@ -175,46 +173,43 @@ template <class TYPE>
 vetor<TYPE> vetor<TYPE>::operator*(const TYPE alfa) const{
     vetor<TYPE> result(arr_size); 
     for(int i = 0; i < arr_size; i++)
-        result.set_value(i, arr_data[i]*alfa);
+        result.set_value(i, this->get_value(i)*alfa);
     return result; 
 }
 
 template <class TYPE>
 TYPE vetor<TYPE>::operator*(const vetor<TYPE>& v){
     static TYPE result;
-    // tconsidera que é zero se for tamanhos diferentes
-    int max_length = (v.length() > this->length()) ? v.length() : this->length();
-    for(int i = 0; i < max_length; i++)
-        result += arr_data[i] * v[i];
+    if(this->verify_dim(v)) result; // obj null
+    for(int i = 0; i < arr_size; i++)
+        result += this->get_value(i) * v[i];
     return result; 
 }
 
 template <class TYPE>
 void vetor<TYPE>::operator+=(const vetor<TYPE>& v){
-    int max_length = (v.length() > this->length()) ? v.length() : this->length();
-    // completa os numeros vazios com 0
-    for(int i = 0; i < max_length; i++)
-        arr_data[i] = v[i] + arr_data[i];
+    if(this->verify_dim(v)) this->set_null();
+    for(int i = 0; i < arr_size; i++)
+        this->set_value(i, v[i] + this->get_value(i));
 }
 
 template <class TYPE>
 void vetor<TYPE>::operator-=(const vetor<TYPE>& v){
-    int max_length = (v.length() > this->length()) ? v.length() : this->length();
-    // completa os numeros vazios com 0
-    for(int i = 0; i < max_length; i++)
-        arr_data[i] = arr_data[i] - v[i];
+    if(this->verify_dim(v)) this->set_null();
+    for(int i = 0; i < arr_size; i++)
+        this->set_value(i, v[i] - this->get_value(i));
 }
 
 template <class TYPE>
 void vetor<TYPE>::operator*=(const TYPE alfa){
     for(int i = 0; i < arr_size; i++)
-        arr_data[i] *= alfa;
+        this->set_value(i, this->get_value(i) * alfa);
 }
 
 template <class TYPE>
 void vetor<TYPE>::operator/=(const TYPE alfa){
     for(int i = 0; i < arr_size; i++)
-        arr_data[i] /= alfa;
+        this->set_value(i, this->get_value(i)/alfa);
 }
 
 #endif

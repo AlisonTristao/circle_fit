@@ -14,18 +14,6 @@ using namespace std;
 // *       Class of Matrix       *
 // *******************************
 
-/*
-    CUIDADO NA INTERAÇÂO DE MATRIZES DE TAMANHOS DIFERENTES
-    ao acessar itens fora do tamanho da matriz, as funções retornam zero
-
-    ex multiplicação:
-    (ele vai completar a linha que falta com zeros)
-
-    [1, 2, 4]       [1, 2, 3]
-    [3, 4, 5]   *   [3, 4, 5]
-    [6, 7, 8]       [0, 0, 0] <-
-*/
-
 template <class TYPE>
 class matriz {
     private:
@@ -37,18 +25,24 @@ class matriz {
             for(int j = 0; j < row; j++)
                 arr_data[j].set_size(col);
         };
+        void set_null(){
+            col_size = 0;
+            row_size = 0;
+            arr_data = nullptr;
+        }
         virtual ~matriz(){
             delete[] arr_data;
         };
 
         // manipulação dos dados
+        bool verify_dim(const matriz<TYPE>& m2);
         void set_value(int i, int j, TYPE value);
         // nao implementei pq da mto trabalho
         //matriz<TYPE> stagging();
         //double get_determinant();
         const TYPE get_value(int i, int j) const;
-        vetor<TYPE> get_row(int index);
-        vetor<TYPE> get_col(int index);
+        const vetor<TYPE> get_row(int index) const;
+        const vetor<TYPE> get_col(int index) const;
         const int rows() const;
         const int cols() const;
         const string text() const;
@@ -71,14 +65,27 @@ class matriz {
 };
 
 template <class TYPE>
+bool matriz<TYPE>::verify_dim(const matriz<TYPE>& m2){
+    if(this->rows() != m2.rows() || this->cols() != m2.cols()){
+        cout << "Matrizes com dimensoes diferentes" << endl;
+        return true;
+    }
+    return false;
+}
+
+template <class TYPE>
 void matriz<TYPE>::set_value(int i, int j, TYPE value){
-    if(i >= row_size || i < 0 || j< 0 || j >= col_size) return;
+    if(i >= row_size || i < 0 || j< 0 || j >= col_size){
+        cout << "Index inexistente (set_value)" << endl;
+        return;
+    }
     arr_data[i].set_value(j, value);
 }
 
 template <class TYPE>
 const TYPE matriz<TYPE>::get_value(int i, int j) const{
     if(i < 0 || i >= row_size || j < 0 || j >= col_size){
+        cout << "Index inexistente (get_value)" << endl;
         static TYPE default_value;
         return default_value;
     }
@@ -86,20 +93,20 @@ const TYPE matriz<TYPE>::get_value(int i, int j) const{
 }
 
 template <class TYPE>
-vetor<TYPE> matriz<TYPE>::get_row(int i){
+const vetor<TYPE> matriz<TYPE>::get_row(int i) const{
     vetor<TYPE> v(col_size);
     if(i < 0 || i >= row_size) return v;
     for(int j = 0; j < v.length(); j++)
-        v.set_value(j, arr_data[i].get_value(j));
+        v.set_value(j, this->get_value(i, j));
     return v;
 }
 
 template <class TYPE>
-vetor<TYPE> matriz<TYPE>::get_col(int i){
+const vetor<TYPE> matriz<TYPE>::get_col(int i) const{
     vetor<TYPE> v(row_size);
     if(i < 0 || i >= col_size) return v;
     for(int j = 0; j < v.length(); j++)
-        v.set_value(j, arr_data[j].get_value(i));
+        v.set_value(j, this->get_value(j, i));
     return v;
 }
 
@@ -110,9 +117,11 @@ const string matriz<TYPE>::text() const{
     //      [7, 8, 9]
     string text;
     for(int i = 0; i < row_size; i++){
-        text += arr_data[i].text();
+        vetor<TYPE> v = this->get_row(i);
+        text += v.text();
         if(i < row_size - 1) text += "\n";
     }
+    if(row_size == 0 || col_size == 0) text += "[NULL]"; // obj null
     return text; 
 }
 
@@ -131,22 +140,27 @@ template <class TYPE>
 void matriz<TYPE>::operator=(const matriz<TYPE>& m){
     for(int i = 0; i < row_size; i++)
         for(int j = 0; j < col_size; j++)
-            arr_data[i].set_value(j, 2);
+            this->set_value(i, j, m.get_value(i, j));
 }
 
 template <class TYPE>
 matriz<TYPE> matriz<TYPE>::operator+(const matriz<TYPE>& m){
-    // maior comprimento de cada
-    int max_rows = (m.rows() > this->rows()) ? m.rows() : this->rows();
-    int max_cols = (m.cols() > this->cols()) ? m.cols() : this->cols();
-    // completa os numeros vazios com 0
-    matriz<TYPE> result(max_rows, max_cols);
-    for(int i = 0; i < max_rows; i++)
-        for(int j = 0; j < max_cols; j++)
+    matriz<TYPE> result(this->rows(), this->cols());
+    if(this->verify_dim(m)) result.set_null();
+    for(int i = 0; i < this->rows(); i++)
+        for(int j = 0; j < this->cols(); j++)
             result.set_value(i, j, m.get_value(i, j) + this->get_value(i, j));
     return result;
 }
 
-
+template <class TYPE>
+matriz<TYPE> matriz<TYPE>::operator-(const matriz<TYPE>& m){
+    matriz<TYPE> result(this->rows(), this->cols());
+    if(this->verify_dim(m)) result.set_null();
+    for(int i = 0; i < this->rows(); i++)
+        for(int j = 0; j < this->cols(); j++)
+            result.set_value(i, j, m.get_value(i, j) - this->get_value(i, j));
+    return result;
+}
 
 #endif

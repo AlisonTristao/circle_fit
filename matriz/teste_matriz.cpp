@@ -14,12 +14,12 @@ int main(){
         for(int j = 0; j < b; j++)
             m.set_value(i, j, i + j);
 
-    matriz<int> v(b, a);
+    matriz<int> v(a, b);
 
-    for(int i = 0; i < b; i++)
-        for(int j = 0; j < a; j++)
+    for(int i = 0; i < a; i++)
+        for(int j = 0; j < b; j++)
             v.set_value(i, j, i + j);
-
+    
     matriz<int> t = m + v;
 
     cout << v.text() << "\n\n"<< m.text() << "\n\n"<< t.text() << endl;
