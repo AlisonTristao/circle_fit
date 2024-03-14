@@ -26,9 +26,9 @@ class matriz {
                 arr_data[j].set_size(col);
         };
         void set_null(){
+            arr_data = nullptr;
             col_size = 0;
             row_size = 0;
-            arr_data = nullptr;
         }
         virtual ~matriz(){
             delete[] arr_data;
@@ -66,6 +66,7 @@ class matriz {
         void operator/=(const TYPE alfa); // cuidado com matrizes int
 };
 
+// mude acao de erro nessas 5 funcoes seguintes
 template <class TYPE>
 bool matriz<TYPE>::verify_dim(const matriz<TYPE>& m) const{
     if(this->rows() != m.rows() || this->cols() != m.cols()){
@@ -97,7 +98,7 @@ bool matriz<TYPE>::verify_row_ele(const vetor<TYPE>& v) const{
 template <class TYPE>
 void matriz<TYPE>::set_value(int i, int j, TYPE value){
     if(i >= row_size || i < 0 || j< 0 || j >= col_size){
-        cout << "Index inexistente (set_value)" << endl;
+        cout << "Index inexistente (matriz.set_value)" << endl;
         return;
     }
     arr_data[i].set_value(j, value);
@@ -106,8 +107,8 @@ void matriz<TYPE>::set_value(int i, int j, TYPE value){
 template <class TYPE>
 const TYPE matriz<TYPE>::get_value(int i, int j) const{
     if(i < 0 || i >= row_size || j < 0 || j >= col_size){
-        cout << "Index inexistente (get_value)" << endl;
-        static TYPE default_value;
+        cout << "Index inexistente (matriz.get_value)" << endl;
+        TYPE default_value = 0;
         return default_value;
     }
     return arr_data[i].get_value(j);

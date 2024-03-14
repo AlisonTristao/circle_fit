@@ -64,6 +64,7 @@ class vetor {
         void operator/=(const TYPE alfa); // cuidado com vetores int
 };
 
+// mude acao de erro nessas 3 funcoes seguintes
 template <class TYPE>
 bool vetor<TYPE>::verify_dim(const vetor<TYPE>& v){
     if(this->length() != v.length()){
@@ -76,7 +77,7 @@ bool vetor<TYPE>::verify_dim(const vetor<TYPE>& v){
 template <class TYPE>
 void vetor<TYPE>::set_value(int index, TYPE value){
     if(index < 0 || index >= arr_size){
-        cout << "Erro no tamanho dos vetores (set_value)" << endl;
+        cout << "Index inexistente (matriz.set_value)" << endl;
         return;
     }
     arr_data[index] = value;
@@ -85,7 +86,7 @@ void vetor<TYPE>::set_value(int index, TYPE value){
 template <class TYPE>
 const TYPE vetor<TYPE>::get_value(int index) const{
     if(index < 0 || index >= arr_size){
-        cout << "Erro no tamanho dos vetores (get_value)" << endl;
+        cout << "Index inexistente (vetor.get_value)" << endl;
         TYPE default_value = 0;
         return default_value;
     }
