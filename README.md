@@ -19,7 +19,7 @@ logo, para N pontos:
 
 [x1 y1 1] * [a] = [x1²+y1²]
 
-    ...     [b]      ...
+[...]       [b]     [...]
     
 [xn yn 1]   [c]   [xn²+yn²]
 
