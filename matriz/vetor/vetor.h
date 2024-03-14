@@ -1,9 +1,10 @@
 #ifndef VETOR
 #define VETOR
+
+// lembrar de tirar isso na versão de ESP32
 #include <string>
 #include <cmath>
 #include <iostream>
-
 using namespace std;
 
 // Alison de Oliveira Tristao

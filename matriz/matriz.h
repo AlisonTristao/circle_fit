@@ -1,11 +1,6 @@
 #ifndef MATRIZ
 #define MATRIZ
 #include "vetor/vetor.h"
-#include <string>
-#include <cmath>
-#include <iostream>
-
-using namespace std;
 
 // Alison de Oliveira Tristao
 // github.com/AlisonTristao
