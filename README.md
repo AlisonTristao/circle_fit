@@ -18,3 +18,6 @@ Então, formamos um sistema Ax = b
 [x, y, 1] * [a, b, c]^t = [x²+y²] 
 
 No qual, para mais que 3 pontos, temos um sistema superdeterminado.
+
+
+![Exemple fit](exemple.png)
