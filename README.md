@@ -17,8 +17,10 @@ a x   + b y   + c               = x²+y²
 
 logo, para N pontos:
 
-[x1 y1 1] * [a] = [x1²+y1²]\n
-    ...     [b]      ...\n
+[x1 y1 1] * [a] = [x1²+y1²]
+
+    ...     [b]      ...
+    
 [xn yn 1]   [c]   [xn²+yn²]
 
 solucionando esses sistema super determinado, 
