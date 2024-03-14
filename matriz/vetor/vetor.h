@@ -33,7 +33,7 @@ class vetor {
         void set_size(int size){
             arr_size = size;
             arr_data = new TYPE[size];
-            static TYPE default_value;
+            TYPE default_value = 0;
             for(int i = 0; i < size; i++) // preenche com zeros
                 arr_data[i] = default_value;
         };
@@ -51,8 +51,8 @@ class vetor {
         const TYPE operator[](int index) const;
         vetor<TYPE> operator+(const vetor<TYPE>& v);
         vetor<TYPE> operator-(const vetor<TYPE>& v);
-        vetor<TYPE> operator*(const TYPE alfa) const;
-        vetor<TYPE> operator/(const TYPE alfa) const; // cuidado com vetores int
+        vetor<TYPE> operator*(const TYPE alfa);
+        vetor<TYPE> operator/(const TYPE alfa); // cuidado com vetores int
         // vetor linha * vetor coluna
         TYPE operator*(const vetor<TYPE>& v);
 
@@ -86,7 +86,7 @@ template <class TYPE>
 const TYPE vetor<TYPE>::get_value(int index) const{
     if(index < 0 || index >= arr_size){
         cout << "Erro no tamanho dos vetores (get_value)" << endl;
-        static TYPE default_value;
+        TYPE default_value = 0;
         return default_value;
     }
     return arr_data[index]; 
@@ -139,7 +139,7 @@ vetor<double> vetor<TYPE>::get_unit_vector(){
 template <class TYPE>
 void vetor<TYPE>::operator=(const vetor<TYPE> v){
     for(int i = 0; i < arr_size; i++)
-        this->get_value(i) = v[i];
+        this->set_value(i, v[i]);
 }
 
 template <class TYPE>
@@ -162,7 +162,7 @@ vetor<TYPE> vetor<TYPE>::operator-(const vetor<TYPE>& v){
 
 // cuidado divisao por inteiros
 template <class TYPE>
-vetor<TYPE> vetor<TYPE>::operator/(const TYPE alfa) const{
+vetor<TYPE> vetor<TYPE>::operator/(const TYPE alfa){
     vetor<TYPE> result(arr_size); 
     for(int i = 0; i < arr_size; i++)
         result.set_value(i, this->get_value(i)/alfa);
@@ -170,7 +170,7 @@ vetor<TYPE> vetor<TYPE>::operator/(const TYPE alfa) const{
 }
 
 template <class TYPE>
-vetor<TYPE> vetor<TYPE>::operator*(const TYPE alfa) const{
+vetor<TYPE> vetor<TYPE>::operator*(const TYPE alfa){
     vetor<TYPE> result(arr_size); 
     for(int i = 0; i < arr_size; i++)
         result.set_value(i, this->get_value(i)*alfa);
@@ -179,8 +179,8 @@ vetor<TYPE> vetor<TYPE>::operator*(const TYPE alfa) const{
 
 template <class TYPE>
 TYPE vetor<TYPE>::operator*(const vetor<TYPE>& v){
-    static TYPE result;
-    if(this->verify_dim(v)) result; // obj null
+    TYPE result = 0;
+    if(this->verify_dim(v)) return result; // obj null
     for(int i = 0; i < arr_size; i++)
         result += this->get_value(i) * v[i];
     return result; 
@@ -197,7 +197,7 @@ template <class TYPE>
 void vetor<TYPE>::operator-=(const vetor<TYPE>& v){
     if(this->verify_dim(v)) this->set_null();
     for(int i = 0; i < arr_size; i++)
-        this->set_value(i, v[i] - this->get_value(i));
+        this->set_value(i, this->get_value(i) - v[i]);
 }
 
 template <class TYPE>

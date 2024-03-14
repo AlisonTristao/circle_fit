@@ -6,21 +6,24 @@ using namespace std;
 
 int main(){
 
-    int a = 2, b = 3;
+    int a = 3, b = 3;
 
-    matriz<int> m(a, b);
+    matriz<double> m(a, b);
+    vetor<int> v(a);
+    vetor<int> g(a);
 
-    for(int i = 0; i < a; i++)
+    for(int i = 0; i < a; i++){
+        v.set_value(i, i);
+        g.set_value(i, 2*i);
         for(int j = 0; j < b; j++)
             m.set_value(i, j, i + j);
+    }
 
-    matriz<int> v(a, b);
+    vetor<int> t = v*2;
 
-    for(int i = 0; i < a; i++)
-        for(int j = 0; j < b; j++)
-            v.set_value(i, j, i + j);
-    
-    matriz<int> t = m + v;
+    t.set_null();
+
+    m /= 2;
 
     cout << v.text() << "\n\n"<< m.text() << "\n\n"<< t.text() << endl;
 
