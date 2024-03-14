@@ -1,6 +1,6 @@
 #ifndef MATRIZ
 #define MATRIZ
-#include "vetor/vetor.h"
+#include "Vetor/Vetor.h"
 
 // Alison de Oliveira Tristao
 // github.com/AlisonTristao
@@ -10,60 +10,66 @@
 // *******************************
 
 template <class TYPE>
-class matriz {
+class Matriz {
     private:
-        int row_size,  col_size;
-        vetor<TYPE>* arr_data;
+        int row_size = 0,  col_size = 0;
+        Vetor<TYPE>* arr_data;
     public:
-        matriz(int row, int col) : row_size(row), col_size(col){
-            arr_data = new vetor<TYPE>[row];
+        Matriz(){}; // default constructor
+        Matriz(int row, int col){
+            set_size(row, col);
+        };
+        void set_size(int row, int col){
+            col_size = col;
+            row_size = row;
+            arr_data = new Vetor<TYPE>[row];
             for(int j = 0; j < row; j++)
                 arr_data[j].set_size(col);
-        };
+        }
         void set_null(){
             arr_data = nullptr;
             col_size = 0;
             row_size = 0;
         }
-        virtual ~matriz(){
+        virtual ~Matriz(){
             delete[] arr_data;
         };
 
         // manipulação dos dados
-        bool verify_dim(const matriz<TYPE>& m) const;
-        bool verify_row_col(const matriz<TYPE>& m) const;
-        bool verify_row_ele(const vetor<TYPE>& v) const;
+        bool verify_dim(const Matriz<TYPE>& m) const;
+        bool verify_row_col(const Matriz<TYPE>& m) const;
+        bool verify_row_ele(const Vetor<TYPE>& v) const;
         void set_value(int i, int j, TYPE value);
         const TYPE get_value(int i, int j) const;
         // nao implementei pq da mto trabalho
-        //matriz<TYPE> stagging();
+        //Matriz<TYPE> stagging();
         //double get_determinant();
-        vetor<TYPE> get_row(int index) const;
-        vetor<TYPE> get_col(int index) const;
+        Vetor<TYPE> get_row(int index) const;
+        Vetor<TYPE> get_col(int index) const;
         const int rows() const;
         const int cols() const;
         const string text() const;
 
         // alltera os operadores
-        matriz<TYPE> operator+(const matriz<TYPE>& m);
-        matriz<TYPE> operator-(const matriz<TYPE>& m);
-        matriz<TYPE> operator*(const matriz<TYPE>& m);
-        matriz<TYPE> operator*(const TYPE alfa);
-        matriz<TYPE> operator/(const TYPE alfa); // cuidado com matrizes int
-        // matriz * vetor coluna
-        vetor<TYPE> operator*(const vetor<TYPE>& v); 
+        Matriz<TYPE> operator+(const Matriz<TYPE>& m);
+        Matriz<TYPE> operator-(const Matriz<TYPE>& m);
+        Matriz<TYPE> operator*(const Matriz<TYPE>& m);
+        Matriz<TYPE> operator*(const TYPE alfa);
+        Matriz<TYPE> operator/(const TYPE alfa); // cuidado com Matrizes int
+        // Matriz * Vetor coluna
+        Vetor<TYPE> operator*(const Vetor<TYPE>& v); 
 
         // opradores que nao retornam nada
-        void operator=(const matriz<TYPE>& m);
-        void operator+=(const matriz<TYPE>& m);
-        void operator-=(const matriz<TYPE>& m);
+        void operator=(const Matriz<TYPE>& m);
+        void operator+=(const Matriz<TYPE>& m);
+        void operator-=(const Matriz<TYPE>& m);
         void operator*=(const TYPE alfa);
-        void operator/=(const TYPE alfa); // cuidado com matrizes int
+        void operator/=(const TYPE alfa); // cuidado com Matrizes int
 };
 
 // mude acao de erro nessas 5 funcoes seguintes
 template <class TYPE>
-bool matriz<TYPE>::verify_dim(const matriz<TYPE>& m) const{
+bool Matriz<TYPE>::verify_dim(const Matriz<TYPE>& m) const{
     if(this->rows() != m.rows() || this->cols() != m.cols()){
         cout << "Matrizes com dimensoes diferentes" << endl;
         return true;
@@ -72,7 +78,7 @@ bool matriz<TYPE>::verify_dim(const matriz<TYPE>& m) const{
 }
 
 template <class TYPE>
-bool matriz<TYPE>::verify_row_col(const matriz<TYPE>& m) const{
+bool Matriz<TYPE>::verify_row_col(const Matriz<TYPE>& m) const{
     if(this->cols() != m.rows()){
         cout << "Matrizes com dimensoes incompativeis para multiplicar" << endl;
         return true;
@@ -81,9 +87,9 @@ bool matriz<TYPE>::verify_row_col(const matriz<TYPE>& m) const{
 }
 
 template <class TYPE>
-bool matriz<TYPE>::verify_row_ele(const vetor<TYPE>& v) const{
-    if(this->rows() != v.length()){
-        cout << "Matrizes com dimensoes incompativeis com vetor coluna" << endl;
+bool Matriz<TYPE>::verify_row_ele(const Vetor<TYPE>& v) const{
+    if(this->cols() != v.length()){
+        cout << "Matrizes com dimensoes incompativeis com Vetor coluna" << endl;
         return true;
     }
     return false;
@@ -91,18 +97,18 @@ bool matriz<TYPE>::verify_row_ele(const vetor<TYPE>& v) const{
 
 
 template <class TYPE>
-void matriz<TYPE>::set_value(int i, int j, TYPE value){
+void Matriz<TYPE>::set_value(int i, int j, TYPE value){
     if(i >= row_size || i < 0 || j< 0 || j >= col_size){
-        cout << "Index inexistente (matriz.set_value)" << endl;
+        cout << "Index inexistente (Matriz.set_value)" << endl;
         return;
     }
     arr_data[i].set_value(j, value);
 }
 
 template <class TYPE>
-const TYPE matriz<TYPE>::get_value(int i, int j) const{
+const TYPE Matriz<TYPE>::get_value(int i, int j) const{
     if(i < 0 || i >= row_size || j < 0 || j >= col_size){
-        cout << "Index inexistente (matriz.get_value)" << endl;
+        cout << "Index inexistente (Matriz.get_value)" << endl;
         TYPE default_value = 0;
         return default_value;
     }
@@ -110,8 +116,8 @@ const TYPE matriz<TYPE>::get_value(int i, int j) const{
 }
 
 template <class TYPE>
-vetor<TYPE> matriz<TYPE>::get_row(int i) const{
-    vetor<TYPE> v(col_size);
+Vetor<TYPE> Matriz<TYPE>::get_row(int i) const{
+    Vetor<TYPE> v(col_size);
     if(i < 0 || i >= row_size) return v;
     for(int j = 0; j < v.length(); j++)
         v.set_value(j, this->get_value(i, j));
@@ -119,8 +125,8 @@ vetor<TYPE> matriz<TYPE>::get_row(int i) const{
 }
 
 template <class TYPE>
-vetor<TYPE> matriz<TYPE>::get_col(int i) const{
-    vetor<TYPE> v(row_size);
+Vetor<TYPE> Matriz<TYPE>::get_col(int i) const{
+    Vetor<TYPE> v(row_size);
     if(i < 0 || i >= col_size) return v;
     for(int j = 0; j < v.length(); j++)
         v.set_value(j, this->get_value(j, i));
@@ -128,41 +134,41 @@ vetor<TYPE> matriz<TYPE>::get_col(int i) const{
 }
 
 template <class TYPE>
-const string matriz<TYPE>::text() const{
+const string Matriz<TYPE>::text() const{
     // ex:  [1, 2, 3]
     //      [4, 5, 6]
     //      [7, 8, 9]
     string text;
     for(int i = 0; i < row_size; i++){
-        vetor<TYPE> v = this->get_row(i);
+        Vetor<TYPE> v = this->get_row(i);
         text += v.text();
-        if(i < row_size - 1) text += "\n";
+        text += "\n";
     }
-    if(row_size == 0 || col_size == 0) text += "[NULL]"; // obj null
+    if(row_size == 0 || col_size == 0) text += "[NULL]\n"; // obj null
     return text; 
 }
 
 template <class TYPE>
-const int matriz<TYPE>::cols() const{
+const int Matriz<TYPE>::cols() const{
     return col_size; 
 }
 
 template <class TYPE>
-const int matriz<TYPE>::rows() const{
+const int Matriz<TYPE>::rows() const{
     return row_size; 
 }
 
-// cuidado com matriz definidos com tamanho diferentes
+// cuidado com Matriz definidos com tamanho diferentes
 template <class TYPE>
-void matriz<TYPE>::operator=(const matriz<TYPE>& m){
+void Matriz<TYPE>::operator=(const Matriz<TYPE>& m){
     for(int i = 0; i < row_size; i++)
         for(int j = 0; j < col_size; j++)
             this->set_value(i, j, m.get_value(i, j));
 }
 
 template <class TYPE>
-matriz<TYPE> matriz<TYPE>::operator+(const matriz<TYPE>& m){
-    matriz<TYPE> result(this->rows(), this->cols());
+Matriz<TYPE> Matriz<TYPE>::operator+(const Matriz<TYPE>& m){
+    Matriz<TYPE> result(this->rows(), this->cols());
     if(this->verify_dim(m)) result.set_null();
     for(int i = 0; i < this->rows(); i++)
         for(int j = 0; j < this->cols(); j++)
@@ -171,8 +177,8 @@ matriz<TYPE> matriz<TYPE>::operator+(const matriz<TYPE>& m){
 }
 
 template <class TYPE>
-matriz<TYPE> matriz<TYPE>::operator-(const matriz<TYPE>& m){
-    matriz<TYPE> result(this->rows(), this->cols());
+Matriz<TYPE> Matriz<TYPE>::operator-(const Matriz<TYPE>& m){
+    Matriz<TYPE> result(this->rows(), this->cols());
     if(this->verify_dim(m)) result.set_null();
     for(int i = 0; i < this->rows(); i++)
         for(int j = 0; j < this->cols(); j++)
@@ -181,8 +187,8 @@ matriz<TYPE> matriz<TYPE>::operator-(const matriz<TYPE>& m){
 }
 
 template <class TYPE>
-matriz<TYPE> matriz<TYPE>::operator*(const TYPE alfa){
-    matriz<TYPE> result(this->rows(), this->cols());
+Matriz<TYPE> Matriz<TYPE>::operator*(const TYPE alfa){
+    Matriz<TYPE> result(this->rows(), this->cols());
     for(int i = 0; i < this->rows(); i++)
         for(int j = 0; j < this->cols(); j++)
             result.set_value(i, j, this->get_value(i, j) * alfa);
@@ -190,8 +196,8 @@ matriz<TYPE> matriz<TYPE>::operator*(const TYPE alfa){
 }
 
 template <class TYPE>
-matriz<TYPE> matriz<TYPE>::operator/(const TYPE alfa){
-    matriz<TYPE> result(this->rows(), this->cols());
+Matriz<TYPE> Matriz<TYPE>::operator/(const TYPE alfa){
+    Matriz<TYPE> result(this->rows(), this->cols());
     for(int i = 0; i < this->rows(); i++)
         for(int j = 0; j < this->cols(); j++)
             result.set_value(i, j, this->get_value(i, j)/alfa);
@@ -199,8 +205,8 @@ matriz<TYPE> matriz<TYPE>::operator/(const TYPE alfa){
 }
 
 template <class TYPE>
-matriz<TYPE> matriz<TYPE>::operator*(const matriz<TYPE>& m){
-    matriz<TYPE> result(this->rows(), m.cols());
+Matriz<TYPE> Matriz<TYPE>::operator*(const Matriz<TYPE>& m){
+    Matriz<TYPE> result(this->rows(), m.cols());
     if(this->verify_row_col(m)) result.set_null();
     for(int i = 0; i < result.rows(); i++){
         for(int j = 0; j < result.cols(); j++){
@@ -211,8 +217,8 @@ matriz<TYPE> matriz<TYPE>::operator*(const matriz<TYPE>& m){
 }
 
 template <class TYPE>
-vetor<TYPE> matriz<TYPE>::operator*(const vetor<TYPE>& v){
-    vetor<TYPE> result(v.length());
+Vetor<TYPE> Matriz<TYPE>::operator*(const Vetor<TYPE>& v){
+    Vetor<TYPE> result(this->rows());
     if(this->verify_row_ele(v)) result.set_null();
     for(int i = 0; i < result.length(); i++){
         result.set_value(i, this->get_row(i) * v);
@@ -221,7 +227,7 @@ vetor<TYPE> matriz<TYPE>::operator*(const vetor<TYPE>& v){
 }
 
 template <class TYPE>
-void matriz<TYPE>::operator+=(const matriz<TYPE>& m){
+void Matriz<TYPE>::operator+=(const Matriz<TYPE>& m){
     if(this->verify_dim(m)) return;
     for(int i = 0; i < this->rows(); i++)
         for(int j = 0; j < this->cols(); j++)
@@ -229,7 +235,7 @@ void matriz<TYPE>::operator+=(const matriz<TYPE>& m){
 }
 
 template <class TYPE>
-void matriz<TYPE>::operator-=(const matriz<TYPE>& m){
+void Matriz<TYPE>::operator-=(const Matriz<TYPE>& m){
     if(this->verify_dim(m)) return;
     for(int i = 0; i < this->rows(); i++)
         for(int j = 0; j < this->cols(); j++)
@@ -237,14 +243,14 @@ void matriz<TYPE>::operator-=(const matriz<TYPE>& m){
 }
 
 template <class TYPE>
-void matriz<TYPE>::operator*=(const TYPE alfa){
+void Matriz<TYPE>::operator*=(const TYPE alfa){
     for(int i = 0; i < this->rows(); i++)
         for(int j = 0; j < this->cols(); j++)
             this->set_value(i, j, this->get_value(i, j) * alfa);
 }
 
 template <class TYPE>
-void matriz<TYPE>::operator/=(const TYPE alfa){
+void Matriz<TYPE>::operator/=(const TYPE alfa){
     for(int i = 0; i < this->rows(); i++)
         for(int j = 0; j < this->cols(); j++)
             this->set_value(i, j, this->get_value(i, j)/alfa);
