@@ -1,27 +1,20 @@
 # circle_fit
+
 Bilioteca que fita pontos em um plano cartesiano com equação de circulo
 
-Autor: Alison de Oliveira Tristão
-email: AlisonTristao@hotmail.com
+**Author:** Alison de Oliveira Tristão  
+**Email:** AlisonTristao@hotmail.com  
 
 Usamos a equação do circulo:
 
 (x + x0)² + (y + y0)² = R²
 
-            ||
-            \/
+2x0 x + 2y0 y + (x0² + y0² - R²) = x² + y²
 
-2x0 x + 2y0 y + (x0² + y0² -R²) = x²+y²
+a x   + b y   + c               = x² + y²
 
-a x   + b y   + c               = x²+y²
+Então, formamos um sistema Ax = b
 
-logo, para N pontos:
+[x, y, 1] * [a, b, c]^t = [x²+y²] 
 
-[x1 y1 1] * [a] = [x1²+y1²]
-
-[...]       [b]     [...]
-    
-[xn yn 1]   [c]   [xn²+yn²]
-
-solucionando esses sistema super determinado, 
-achamos o raio e o centro deslocado
+No qual, para mais que 3 pontos, temos um sistema superdeterminado.
