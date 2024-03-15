@@ -44,12 +44,27 @@ class CircleFit {
         };
         virtual ~CircleFit(){};
 
+        const string text() const;
         void set_paramns(int len);
+        void set_value(int index, TYPE xn, TYPE yn);
         void add_cyclic(TYPE xn, TYPE yn);
         void add_cyclic(Vetor<TYPE>& ponto);
         void linear_system(Matriz<TYPE>& coefficients, Vetor<TYPE>& constants);
         Matriz<TYPE> linear_system();
 };
+
+template <class TYPE>
+const string CircleFit<TYPE>::text() const{
+    string text = "Pontos: \n[x, y]\n";
+    for(int i  = 0; i < nPoints; i++){
+        text += "[";
+        text += to_string(arr_points.get_value(i, 0));
+        text += ", ";
+        text += to_string(arr_points.get_value(i, 1));
+        text += "]\n";
+    }
+    return text;
+}
 
 template <class TYPE>
 void CircleFit<TYPE>::set_paramns(int len){
@@ -69,16 +84,21 @@ void CircleFit<TYPE>::set_paramns(int len){
 
 template <class TYPE>
 void CircleFit<TYPE>::add_cyclic(TYPE xn, TYPE yn){
-    // salva a matriz de pontos
-    arr_points.set_value(cyclical_index, x, xn);
-    arr_points.set_value(cyclical_index, y, yn);
-    // salva os pontos transpostos
-    arr_points_transposed.set_value(x, cyclical_index, xn);
-    arr_points_transposed.set_value(y, cyclical_index, yn);
-    // salva o resultado
-    r.set_value(cyclical_index, (xn*xn) + (yn*yn));
+    this->set_value(cyclical_index, xn, yn);
     // reseta o index ciclico
     if(++cyclical_index == nPoints) cyclical_index = 0;
+}
+
+template <class TYPE>
+void CircleFit<TYPE>::set_value(int index, TYPE xn, TYPE yn){
+    // salva a matriz de pontos
+    arr_points.set_value(index, x, xn);
+    arr_points.set_value(index, y, yn);
+    // salva os pontos transpostos
+    arr_points_transposed.set_value(x, index, xn);
+    arr_points_transposed.set_value(y, index, yn);
+    // salva o resultado
+    r.set_value(index, (xn*xn) + (yn*yn));
 }
 
 template <class TYPE>

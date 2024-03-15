@@ -46,8 +46,8 @@ class Matriz {
         //double get_determinant();
         Vetor<TYPE> get_row(int index) const;
         Vetor<TYPE> get_col(int index) const;
-        const int rows() const;
-        const int cols() const;
+        int rows() const;
+        int cols() const;
         const string text() const;
 
         // alltera os operadores
@@ -149,12 +149,12 @@ const string Matriz<TYPE>::text() const{
 }
 
 template <class TYPE>
-const int Matriz<TYPE>::cols() const{
+int Matriz<TYPE>::cols() const{
     return col_size; 
 }
 
 template <class TYPE>
-const int Matriz<TYPE>::rows() const{
+int Matriz<TYPE>::rows() const{
     return row_size; 
 }
 
